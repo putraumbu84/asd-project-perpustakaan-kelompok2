@@ -129,6 +129,11 @@ def uji_menu_tidak_valid():
     siapkan_data()
     assert jalankan(["abc", "", "7", "0"]).count("Pilihan tidak valid") == 3
 
+def uji_update_kode_persis():
+    siapkan_data()
+    assert "tidak ditemukan" in jalankan(["4", "bk002", "", "0"])
+    assert status_semua()["BK002"] == "Tersedia"
+
 
 if __name__ == "__main__":
     uji_tambah_buku()
@@ -139,4 +144,7 @@ if __name__ == "__main__":
     uji_filter_genre()
     uji_hapus_buku()
     uji_menu_tidak_valid()
+
+    
+    uji_update_kode_persis()
     print("SEMUA PENGUJIAN LULUS")
