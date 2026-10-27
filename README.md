@@ -36,7 +36,7 @@ cd asd-project-perpustakaan-kelompok2
 python main.py
 ```
 
-Pengujian otomatis (opsional): `python uji_fitur.py`
+Pengujian otomatis (opsional): `python uji_fitur.py`. Pengujian mencakup F1 sampai F6, pembatalan di F1, validasi tahun terbit, dan pencarian kode yang membedakan huruf besar/kecil. Jika semua lolos, muncul tulisan "SEMUA PENGUJIAN LULUS".
 
 Tips: ketik `batal` pada isian apa pun di Fitur 1 (Tambah Buku) untuk membatalkan proses dan kembali ke menu. Di fitur lain, kata `batal` diperlakukan sebagai teks biasa.
 
