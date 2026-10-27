@@ -1,7 +1,6 @@
 # Sistem Perpustakaan Mini (Tahap 1: Array & Struct)
 
-Project Semester - Algoritma dan Struktur Data
-Sistem Informasi, FTI Unmer Malang | Semester 3 | Tahun Ajaran 2026/2027
+Project Semester - Algoritma dan Struktur Data Sistem Informasi, FTI Unmer Malang | Semester 3 | Tahun Ajaran 2026/2027
 Dosen Pengampu: Amadea Permana Sanusi, S.Tr.T., M.Tr.Kom
 
 ## 1. Nama & Anggota Kelompok
@@ -12,11 +11,11 @@ Dosen Pengampu: Amadea Permana Sanusi, S.Tr.T., M.Tr.Kom
 
 | No | Nama Lengkap | NIM | Username GitHub |
 |----|--------------|-----|-----------------|
-| 1  | Putra Umbu Tonga Wohangara | 25083000084 | putraumbu84 |
-| 2  | Viggrius Dangkur | 25083000095 | vikidangkur-svg |
-| 3  | Agustian Vianney Calado Jandu | 25083000018 | vigojandu73 |
-| 4  | Marselus Salvano Tikung | 25083000042 | cellosalvano2007 |
-| 5  | Justin Putra Oktavian Lou | 25083000082 | JustinPutra24 |
+| 1 | Putra Umbu Tonga Wohangara | 25083000084 | putraumbu84 |
+| 2 | Viggrius Dangkur | 25083000095 | vikidangkur-svg |
+| 3 | Agustian Vianney Calado Jandu | 25083000018 | vigojandu73 |
+| 4 | Marselus Salvano Tikung | 25083000042 | cellosalvano2007 |
+| 5 | Justin Putra Oktavian Lou | 25083000082 | JustinPutra24 |
 
 ## 2. Deskripsi Sistem
 
@@ -39,18 +38,18 @@ python main.py
 
 Pengujian otomatis (opsional): `python uji_fitur.py`
 
-Tips: ketik `batal` pada isian apa pun di Fitur 1 sampai 6 untuk membatalkan proses dan kembali ke menu.
+Tips: ketik `batal` pada isian apa pun di Fitur 1 (Tambah Buku) untuk membatalkan proses dan kembali ke menu. Di fitur lain, kata `batal` diperlakukan sebagai teks biasa.
 
 ## 4. Fitur yang Sudah Ada
 
 | Kode | Fitur | Keterangan |
 |------|-------|------------|
-| F1 | Tambah Buku Baru | Validasi: semua isian wajib diisi, kode buku tidak boleh duplikat, tahun terbit angka bulat positif dan tidak melebihi tahun sekarang. Status otomatis "Tersedia". |
+| F1 | Tambah Buku Baru | Validasi: semua isian wajib diisi, kode buku tidak boleh duplikat (huruf besar/kecil tidak dibedakan, jadi `bk001` dan `BK001` dianggap sama), tahun terbit angka bulat positif dan tidak melebihi tahun sekarang. Status otomatis "Tersedia". |
 | F2 | Tampilkan Semua Buku | Tabel lengkap dengan penanda [TERSEDIA]/[DIPINJAM] dan ringkasan total, Tersedia, Dipinjam. |
-| F3 | Cari Buku | Berdasarkan kode (exact match) atau judul (partial match, tidak case sensitive). |
-| F4 | Update Status Buku | Toggle otomatis Tersedia <-> Dipinjam dengan konfirmasi (y/n). |
+| F3 | Cari Buku | Berdasarkan kode (exact match, huruf besar/kecil dibedakan) atau judul (partial match, tidak case sensitive). |
+| F4 | Update Status Buku | Toggle otomatis Tersedia <-> Dipinjam dengan konfirmasi (y/n). Kode buku dicari dengan exact match. |
 | F5 | Filter Buku by Genre | Partial match dan tidak case sensitive. |
-| F6 | Hapus Buku | Buku berstatus Dipinjam ditolak; konfirmasi (y/n) sebelum dihapus. |
+| F6 | Hapus Buku | Buku berstatus Dipinjam ditolak; konfirmasi (y/n) sebelum dihapus. Kode buku dicari dengan exact match. |
 
 Struktur folder:
 
@@ -66,11 +65,11 @@ asd-project-perpustakaan-kelompok2/
 
 | Anggota | Bagian yang Dikerjakan | File / Fungsi |
 |---------|------------------------|---------------|
-| Putra Umbu Tonga Wohangara | Setup repository, menu utama, README | `main.py`: `tampilkan_menu()`, `jalankan_program()`; `README.md` |
-| Viggrius Dangkur | F1 Tambah Buku beserta seluruh validasinya | `buku.py`: `tambah_buku()`, `validasi_tahun()`, `minta_input_wajib()`, `buat_buku()` |
-| Agustian Vianney Calado Jandu | F2 Tampilkan Semua Buku dan F5 Filter Genre | `buku.py`: `tampilkan_semua_buku()`, `cetak_tabel()`, `hitung_ringkasan()`, `potong_teks()`, `filter_buku_by_genre()` |
-| Marselus Salvano Tikung | F3 Cari Buku dan F4 Update Status | `buku.py`: `cari_buku()`, `cari_berdasarkan_kode()`, `cari_berdasarkan_judul()`, `cari_indeks_by_kode()`, `update_status_buku()`, `cetak_detail()` |
-| Justin Putra Oktavian Lou | F6 Hapus Buku dan pengujian otomatis | `buku.py`: `hapus_buku()`, `minta_konfirmasi()`; `uji_fitur.py` |
+| Putra Umbu Tonga Wohangara | Setup repository, menu utama, README | main.py: tampilkan_menu(), jalankan_program(); README.md |
+| Viggrius Dangkur | F1 Tambah Buku beserta seluruh validasinya | buku.py: tambah_buku(), minta_kode_baru(), minta_teks(), minta_tahun(), validasi_tahun(), minta_input_wajib(), buat_buku() |
+| Agustian Vianney Calado Jandu | F2 Tampilkan Semua Buku dan F5 Filter Genre | buku.py: tampilkan_semua_buku(), cetak_tabel(), hitung_ringkasan(), potong_teks(), filter_buku_by_genre() |
+| Marselus Salvano Tikung | F3 Cari Buku dan F4 Update Status | buku.py: cari_buku(), cari_berdasarkan_kode(), cari_berdasarkan_judul(), cari_indeks_by_kode(), kode_sudah_ada(), update_status_buku(), cetak_detail() |
+| Justin Putra Oktavian Lou | F6 Hapus Buku dan pengujian otomatis | buku.py: hapus_buku(), minta_konfirmasi(); uji_fitur.py |
 
 ## Rencana Tahap Berikutnya
 
