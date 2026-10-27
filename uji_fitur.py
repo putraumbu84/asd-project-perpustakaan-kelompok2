@@ -135,6 +135,12 @@ def uji_update_kode_persis():
     assert status_semua()["BK002"] == "Tersedia"
 
 
+def uji_validasi_tahun():
+    assert buku.validasi_tahun("2000") == (2000, None)
+    assert buku.validasi_tahun("abc")[0] is None
+    assert buku.validasi_tahun("0")[0] is None
+    assert buku.validasi_tahun("9999")[0] is None
+
 if __name__ == "__main__":
     uji_tambah_buku()
     uji_batal_di_tambah_buku()
@@ -144,7 +150,6 @@ if __name__ == "__main__":
     uji_filter_genre()
     uji_hapus_buku()
     uji_menu_tidak_valid()
-
-    
     uji_update_kode_persis()
+    uji_validasi_tahun()
     print("SEMUA PENGUJIAN LULUS")
