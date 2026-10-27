@@ -69,6 +69,13 @@ def uji_tambah_buku():
     assert buku_baru["status"] == "Tersedia"      # status otomatis
 
 
+def uji_batal_di_tambah_buku():
+    siapkan_data()
+    keluaran = jalankan(["1", "BK008", "Judul", "batal", "", "0"])
+    assert "Penambahan buku dibatalkan" in keluaran
+    assert len(buku.koleksi_buku) == 7
+
+
 def uji_tampil_semua():
     buku.koleksi_buku.clear()
     assert "Belum ada buku dalam koleksi." in jalankan(["2", "", "0"])
@@ -83,6 +90,11 @@ def uji_cari_buku():
     assert "tidak ditemukan" in jalankan(["3", "2", "matematika", "", "0"])
     assert "Buku ditemukan (1 hasil)" in jalankan(["3", "1", "BK004", "", "0"])
     assert "tidak ditemukan" in jalankan(["3", "1", "BK00", "", "0"])   # exact
+    assert "tidak ditemukan" in jalankan(["3", "1", "bk004", "", "0"])  # case sensitive
+    # kata 'batal' hanya membatalkan di F1; di F3 dianggap kata kunci biasa
+    buku.koleksi_buku.append(buku.buat_buku("BK099", "Batal Sudah", "X", "Batal", 2000))
+    assert "Ditemukan 1 buku" in jalankan(["3", "2", "batal", "", "0"])
+    assert "(1 buku ditemukan)" in jalankan(["5", "batal", "", "0"])
 
 
 def uji_update_status():
@@ -120,6 +132,7 @@ def uji_menu_tidak_valid():
 
 if __name__ == "__main__":
     uji_tambah_buku()
+    uji_batal_di_tambah_buku()
     uji_tampil_semua()
     uji_cari_buku()
     uji_update_status()

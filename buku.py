@@ -16,7 +16,7 @@ from datetime import date
 # ---------------------------------------------------------------------
 STATUS_TERSEDIA = "Tersedia"
 STATUS_DIPINJAM = "Dipinjam"
-KATA_BATAL = "batal"      # ketik ini pada isian apa pun untuk membatalkan
+KATA_BATAL = "batal"      # hanya berlaku di F1 (Tambah Buku)
 LEBAR_KOLOM_MAKS = 30     # judul/pengarang yang lebih panjang dipotong
 
 # Array of Struct: list berisi dict buku
@@ -41,12 +41,23 @@ def buat_buku(kode_buku, judul, pengarang, genre, tahun_terbit):
 def cari_indeks_by_kode(kode):
     """
     Linear search: mengembalikan indeks buku dengan kode yang sama persis
-    (huruf besar/kecil diabaikan), atau -1 jika tidak ada.
+    (huruf besar/kecil dibedakan), atau -1 jika tidak ada.
     """
     for indeks, buku in enumerate(koleksi_buku):
-        if buku["kode_buku"].lower() == kode.lower():
+        if buku["kode_buku"] == kode:
             return indeks
     return -1
+
+
+def kode_sudah_ada(kode):
+    """
+    Cek duplikat kode untuk F1. Huruf besar/kecil diabaikan agar 'bk001'
+    dan 'BK001' tidak dianggap dua buku yang berbeda.
+    """
+    for buku in koleksi_buku:
+        if buku["kode_buku"].lower() == kode.lower():
+            return True
+    return False
 
 
 def validasi_tahun(teks_tahun):
@@ -66,14 +77,16 @@ def validasi_tahun(teks_tahun):
     return tahun, None
 
 
-def minta_input_wajib(label):
+def minta_input_wajib(label, boleh_batal=False):
     """
     Meminta input teks yang tidak boleh kosong. Jika kosong, tampilkan
-    error dan minta lagi. Mengembalikan None jika petugas mengetik 'batal'.
+    error dan minta lagi. Jika boleh_batal=True dan petugas mengetik
+    'batal', mengembalikan None. Tanpa boleh_batal, kata 'batal' diperlakukan
+    sebagai teks biasa (supaya judul/genre 'Batal' tetap bisa dicari).
     """
     while True:
         nilai = input("%s: " % label).strip()
-        if nilai.lower() == KATA_BATAL:
+        if boleh_batal and nilai.lower() == KATA_BATAL:
             return None
         if nilai == "":
             nama_isian = label.replace("Masukkan ", "", 1)
@@ -162,54 +175,60 @@ def cetak_detail(buku):
 # ---------------------------------------------------------------------
 # F1 - Tambah Buku Baru
 # ---------------------------------------------------------------------
+def minta_kode_baru():
+    """Meminta kode buku yang belum dipakai. None jika dibatalkan."""
+    while True:
+        kode = minta_input_wajib("Kode Buku", boleh_batal=True)
+        if kode is not None and kode_sudah_ada(kode):
+            print("[GAGAL] Kode buku '%s' sudah digunakan. "
+                  "Gunakan kode lain." % kode)
+            continue
+        return kode
+
+
+def minta_teks(label):
+    """Meminta satu isian teks wajib di F1. None jika dibatalkan."""
+    return minta_input_wajib(label, boleh_batal=True)
+
+
+def minta_tahun():
+    """Meminta tahun terbit yang valid (int). None jika dibatalkan."""
+    while True:
+        teks = minta_input_wajib("Tahun Terbit", boleh_batal=True)
+        if teks is None:
+            return None
+        tahun, pesan_error = validasi_tahun(teks)
+        if pesan_error:
+            print("[GAGAL] %s" % pesan_error)
+            continue
+        return tahun
+
+
 def tambah_buku():
     """Menambah buku baru ke koleksi dengan validasi setiap atribut."""
     print("\n--- TAMBAH BUKU BARU ---")
     print("(ketik '%s' pada isian mana pun untuk membatalkan)" % KATA_BATAL)
 
-    # Kode buku: tidak boleh kosong dan tidak boleh duplikat
-    while True:
-        kode_buku = minta_input_wajib("Kode Buku")
-        if kode_buku is None:
+    # Urutan isian: (nama field, fungsi yang meminta nilainya)
+    langkah = [
+        ("kode_buku", minta_kode_baru),
+        ("judul", lambda: minta_teks("Judul")),
+        ("pengarang", lambda: minta_teks("Pengarang")),
+        ("genre", lambda: minta_teks("Genre")),
+        ("tahun_terbit", minta_tahun),
+    ]
+
+    isian = {}
+    for nama_field, minta in langkah:
+        nilai = minta()
+        if nilai is None:
             print("[INFO] Penambahan buku dibatalkan.")
             return
-        if cari_indeks_by_kode(kode_buku) != -1:
-            print("[GAGAL] Kode buku '%s' sudah digunakan. "
-                  "Gunakan kode lain." % kode_buku)
-            continue
-        break
+        isian[nama_field] = nilai
 
-    judul = minta_input_wajib("Judul")
-    if judul is None:
-        print("[INFO] Penambahan buku dibatalkan.")
-        return
-
-    pengarang = minta_input_wajib("Pengarang")
-    if pengarang is None:
-        print("[INFO] Penambahan buku dibatalkan.")
-        return
-
-    genre = minta_input_wajib("Genre")
-    if genre is None:
-        print("[INFO] Penambahan buku dibatalkan.")
-        return
-
-    # Tahun terbit: angka bulat positif dan tidak melebihi tahun sekarang
-    while True:
-        teks_tahun = minta_input_wajib("Tahun Terbit")
-        if teks_tahun is None:
-            print("[INFO] Penambahan buku dibatalkan.")
-            return
-        tahun_terbit, pesan_error = validasi_tahun(teks_tahun)
-        if pesan_error:
-            print("[GAGAL] %s" % pesan_error)
-            continue
-        break
-
-    koleksi_buku.append(
-        buat_buku(kode_buku, judul, pengarang, genre, tahun_terbit))
+    koleksi_buku.append(buat_buku(**isian))
     print("[OK] Buku '%s' dengan kode %s berhasil ditambahkan ke koleksi."
-          % (judul, kode_buku))
+          % (isian["judul"], isian["kode_buku"]))
 
 
 # ---------------------------------------------------------------------
@@ -248,11 +267,8 @@ def cari_buku():
 
 
 def cari_berdasarkan_kode():
-    """Pencarian exact match pada kode buku (maksimal 1 hasil)."""
+    """Pencarian exact match (huruf besar/kecil dibedakan), maksimal 1 hasil."""
     kata_kunci = minta_input_wajib("Masukkan kode buku")
-    if kata_kunci is None:
-        print("[INFO] Pencarian dibatalkan.")
-        return
     indeks = cari_indeks_by_kode(kata_kunci)
     if indeks == -1:
         print("[INFO] Buku dengan kode '%s' tidak ditemukan dalam koleksi."
@@ -265,9 +281,6 @@ def cari_berdasarkan_kode():
 def cari_berdasarkan_judul():
     """Pencarian partial match pada judul, tidak case sensitive."""
     kata_kunci = minta_input_wajib("Masukkan judul/kata kunci")
-    if kata_kunci is None:
-        print("[INFO] Pencarian dibatalkan.")
-        return
     hasil = []
     for buku in koleksi_buku:
         if kata_kunci.lower() in buku["judul"].lower():
@@ -288,9 +301,6 @@ def update_status_buku():
     """Toggle status Tersedia <-> Dipinjam setelah konfirmasi petugas."""
     print("\n--- UPDATE STATUS BUKU ---")
     kode = minta_input_wajib("Masukkan kode buku")
-    if kode is None:
-        print("[INFO] Update status dibatalkan.")
-        return
 
     indeks = cari_indeks_by_kode(kode)
     if indeks == -1:
@@ -328,9 +338,6 @@ def filter_buku_by_genre():
     """Menampilkan buku yang genre-nya mengandung kata kunci (partial)."""
     print("\n--- FILTER BUKU BERDASARKAN GENRE ---")
     genre = minta_input_wajib("Masukkan genre")
-    if genre is None:
-        print("[INFO] Filter dibatalkan.")
-        return
 
     hasil = []
     for buku in koleksi_buku:
@@ -353,9 +360,6 @@ def hapus_buku():
     """Menghapus buku berdasarkan kode; buku Dipinjam tidak boleh dihapus."""
     print("\n--- HAPUS BUKU ---")
     kode = minta_input_wajib("Masukkan kode buku")
-    if kode is None:
-        print("[INFO] Penghapusan dibatalkan.")
-        return
 
     indeks = cari_indeks_by_kode(kode)
     if indeks == -1:
