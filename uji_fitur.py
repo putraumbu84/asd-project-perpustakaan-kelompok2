@@ -141,6 +141,12 @@ def uji_validasi_tahun():
     assert buku.validasi_tahun("0")[0] is None
     assert buku.validasi_tahun("9999")[0] is None
 
+
+ def uji_filter_genre_sebagian():
+    siapkan_data()
+    assert "(1 buku ditemukan)" in jalankan(["5", "ilm", "", "0"])   
+     
+
 if __name__ == "__main__":
     uji_tambah_buku()
     uji_batal_di_tambah_buku()
@@ -152,4 +158,5 @@ if __name__ == "__main__":
     uji_menu_tidak_valid()
     uji_update_kode_persis()
     uji_validasi_tahun()
+    uji_filter_genre_sebagian()
     print("SEMUA PENGUJIAN LULUS")
