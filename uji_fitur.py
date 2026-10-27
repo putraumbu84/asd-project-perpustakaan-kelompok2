@@ -141,8 +141,8 @@ def uji_validasi_tahun():
     assert buku.validasi_tahun("0")[0] is None
     assert buku.validasi_tahun("9999")[0] is None
 
-
- def uji_filter_genre_sebagian():
+ 
+def uji_filter_genre_sebagian():
     siapkan_data()
     assert "(1 buku ditemukan)" in jalankan(["5", "ilm", "", "0"])  
 
