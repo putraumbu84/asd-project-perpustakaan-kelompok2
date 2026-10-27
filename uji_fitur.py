@@ -144,7 +144,14 @@ def uji_validasi_tahun():
 
  def uji_filter_genre_sebagian():
     siapkan_data()
-    assert "(1 buku ditemukan)" in jalankan(["5", "ilm", "", "0"])   
+    assert "(1 buku ditemukan)" in jalankan(["5", "ilm", "", "0"])  
+
+
+def uji_hapus_kode_persis():
+    siapkan_data()
+    assert "tidak ditemukan" in jalankan(["6", "bk005", "", "0"])
+    assert len(buku.koleksi_buku) == 7
+    
      
 
 if __name__ == "__main__":
@@ -159,4 +166,5 @@ if __name__ == "__main__":
     uji_update_kode_persis()
     uji_validasi_tahun()
     uji_filter_genre_sebagian()
+    uji_hapus_kode_persis()
     print("SEMUA PENGUJIAN LULUS")
